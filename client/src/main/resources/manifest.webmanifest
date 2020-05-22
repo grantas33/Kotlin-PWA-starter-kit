@@ -1,0 +1,23 @@
+{
+  "short_name": "Kotlin PWA",
+  "name": "Kotlin React PWA demo",
+  "description": "Kotlin React PWA demo",
+  "icons": [
+    {
+      "src": "kotlin-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "kotlin-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#FFFFFF"
+}
