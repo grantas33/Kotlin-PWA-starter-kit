@@ -1,4 +1,4 @@
-// Fixes problems with hot-reload (https://youtrack.jetbrains.com/issue/KT-32273)
+// Fixes problems with hot-reload. Thanks to Robert Jaros (https://youtrack.jetbrains.com/issue/KT-32273)
 
 config.resolve.modules.push("../../processedResources/Js/main");
 if (!config.devServer && config.output) {
