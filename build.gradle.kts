@@ -25,13 +25,15 @@ subprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.5")
     }
 
-    tasks.register<Copy>("copyDistribution") {
+    tasks.register<Copy>("copyDistributionToRoot") {
         group = "build"
-        description = "Copies the distribution to the root project distribution."
+        description = "Copies the distribution files to the root project distribution directory."
 
         from("$buildDir/distributions")
         into("${parent?.buildDir}/distributions")
     }
 
-    tasks["build"].finalizedBy("copyDistribution")
+    tasks["build"].finalizedBy("copyDistributionToRoot")
 }
+
+task("run").dependsOn(":serviceWorker:copyDevelopmentWebpackToClient")

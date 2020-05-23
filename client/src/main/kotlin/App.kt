@@ -1,14 +1,10 @@
 package client
 
-import client.components.flexBox
 import client.components.loadingComponent
 import kotlinx.coroutines.*
 import kotlinx.html.js.onClickFunction
-import org.khronos.webgl.Uint8Array
 import react.*
-import react.dom.button
-import react.dom.h1
-import react.dom.h2
+import react.dom.*
 import kotlin.browser.window
 
 val scope = MainScope()
@@ -91,42 +87,40 @@ val App = functionalComponent<RProps> {
         }
     }
 
-    flexBox {
-        when (serviceWorkerState) {
-            is ServiceWorkerState.Registered -> {
-                h1 {
-                    +"Successfully registered a service worker!"
-                }
-                when (pushManagerState) {
-                    is PushManagerState.NotSubscribed -> {
-                        button {
-                            attrs {
-                                onClickFunction = { subscribeUser(pushManagerState.pushManager) }
-                            }
-                            +"Click here to subscribe to push notifications"
-                        }
-                    }
-                    is PushManagerState.Subscribed -> {
-                        h2 {
-                            +"User is subscribed to Push API"
-                        }
-                        button {
-                            attrs {
-                                onClickFunction = { unsubscribeUser(pushManagerState.pushManager) }
-                            }
-                            +"Click here to unsubscribe"
-                        }
-                    }
-                    PushManagerState.NotSupported -> h2 {
-                        +"Push API is not supported on this browser"
-                    }
-                    PushManagerState.Loading -> loadingComponent()
-                }
+    when (serviceWorkerState) {
+        is ServiceWorkerState.Registered -> {
+            h1 {
+                +"Successfully registered a service worker!"
             }
-            is ServiceWorkerState.Failed -> h1 {
-                +"Error in registering service worker: ${serviceWorkerState.errorMessage}"
+            when (pushManagerState) {
+                is PushManagerState.NotSubscribed -> {
+                    button {
+                        attrs {
+                            onClickFunction = { subscribeUser(pushManagerState.pushManager) }
+                        }
+                        +"Click here to subscribe to push notifications"
+                    }
+                }
+                is PushManagerState.Subscribed -> {
+                    h2 {
+                        +"User is subscribed to Push API"
+                    }
+                    button {
+                        attrs {
+                            onClickFunction = { unsubscribeUser(pushManagerState.pushManager) }
+                        }
+                        +"Click here to unsubscribe"
+                    }
+                }
+                PushManagerState.NotSupported -> h2 {
+                    +"Push API is not supported on this browser"
+                }
+                PushManagerState.Loading -> loadingComponent()
             }
-            ServiceWorkerState.Loading -> loadingComponent()
         }
+        is ServiceWorkerState.Failed -> h1 {
+            +"Error in registering service worker: ${serviceWorkerState.errorMessage}"
+        }
+        ServiceWorkerState.Loading -> loadingComponent()
     }
 }

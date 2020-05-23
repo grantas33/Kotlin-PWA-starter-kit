@@ -22,6 +22,7 @@ fun main() {
         "#root" {
             width = LinearDimension("100%")
             height = LinearDimension("100%")
+            textAlign = TextAlign.center
         }
     }
 
