@@ -2,6 +2,8 @@
 
 Create progressive web apps using 100% Kotlin.
 
+Demo: https://kotlin-pwa-starter-kit.herokuapp.com/
+
 Starter-kit PWA features include:
 * Button to subscribe/unsubscribe to web push notifications on supported browsers
 * Offline work
