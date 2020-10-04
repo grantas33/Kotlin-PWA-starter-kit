@@ -1,11 +1,10 @@
 package client
 
+import kotlinext.js.jsObject
 import kotlinx.css.*
-import react.child
 import react.dom.render
-import styled.StyledComponents
+import kotlinx.browser.document
 import styled.injectGlobal
-import kotlin.browser.document
 
 fun main() {
     val styles = CSSBuilder().apply {
@@ -26,9 +25,9 @@ fun main() {
         }
     }
 
-    StyledComponents.injectGlobal(styles.toString())
+    injectGlobal(styles.toString())
 
     render(document.getElementById("root")) {
-        child(functionalComponent = App)
+        App(props = jsObject(), handler = {})
     }
 }

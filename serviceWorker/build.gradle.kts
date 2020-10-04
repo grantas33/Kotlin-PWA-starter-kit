@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackOutput.Target
 
 kotlin {
-    target {
+    js {
         browser {
             webpackTask {
                 output.libraryTarget = Target.SELF
@@ -17,5 +17,5 @@ tasks.register<Copy>("copyDevelopmentWebpackToClient") {
     description = "Copies unprocessed .js output to client's development build directory."
 
     from("$buildDir/distributions")
-    into("${project(":client").buildDir}/processedResources/Js/main")
+    into("${project(":client").buildDir}/processedResources/js/main")
 }

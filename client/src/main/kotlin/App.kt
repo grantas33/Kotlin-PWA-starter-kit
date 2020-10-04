@@ -5,7 +5,7 @@ import kotlinx.coroutines.*
 import kotlinx.html.js.onClickFunction
 import react.*
 import react.dom.*
-import kotlin.browser.window
+import kotlinx.browser.window
 
 val scope = MainScope()
 
@@ -124,3 +124,5 @@ val App = functionalComponent<RProps> {
         ServiceWorkerState.Loading -> loadingComponent()
     }
 }
+
+fun RBuilder.App(props: RProps,handler:RHandler<RProps>) = child(App,props,handler)
