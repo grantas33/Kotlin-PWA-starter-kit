@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.js") version "1.4.10"
+    id("org.jetbrains.kotlin.js") version "1.5.10"
 }
 
 group = "org.example"
@@ -27,7 +27,7 @@ subprojects {
     val implementation by configurations
 
     dependencies {
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.0")
     }
 
     tasks.register<Copy>("copyDistributionToRoot") {
@@ -41,4 +41,4 @@ subprojects {
     tasks["build"].finalizedBy("copyDistributionToRoot")
 }
 
-tasks["run"].dependsOn(":serviceWorker:copyDevelopmentWebpackToClient")
+tasks["browserDevelopmentRun"].dependsOn(":serviceWorker:copyDevelopmentWebpackToClient")

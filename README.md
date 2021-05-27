@@ -12,9 +12,9 @@ Starter-kit PWA features include:
 
 ## Get started
 
-Run app: `./gradlew run`
+Run app: `./gradlew browserDevelopmentRun`
 
-Run app with hot reload: `./gradlew run --continuous` _*will not hot reload service worker_
+Run app with hot reload: `./gradlew browserDevelopmentRun --continuous` _*will not hot reload service worker_
 
 Build for production: `./gradlew build`. The bundled files reside in `build/distributions` directory.
 
