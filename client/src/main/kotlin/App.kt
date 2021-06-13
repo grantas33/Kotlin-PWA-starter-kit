@@ -1,91 +1,25 @@
 package client
 
 import client.components.loadingComponent
-import kotlinx.coroutines.*
+import io.github.grantas33.kotlinpwacomponents.PushManagerState
+import io.github.grantas33.kotlinpwacomponents.ServiceWorkerState
+import io.github.grantas33.kotlinpwacomponents.usePushManager
+import io.github.grantas33.kotlinpwacomponents.useServiceWorker
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.html.js.onClickFunction
 import react.*
 import react.dom.*
-import kotlinx.browser.window
 
 val scope = MainScope()
 
 val App = functionalComponent<RProps> {
 
-    val (serviceWorkerState, setServiceWorkerState) = useState<ServiceWorkerState>(ServiceWorkerState.Loading)
-    val (pushManagerState, setPushManagerState) = useState<PushManagerState>(PushManagerState.Loading)
-
-    suspend fun loadServiceWorkerState() {
-        try {
-            val swRegistration = window.navigator.serviceWorker.register("/serviceWorker.js").await()
-            console.log("Successfully registered a service worker.", swRegistration)
-            setServiceWorkerState(ServiceWorkerState.Registered(swRegistration = swRegistration))
-        } catch (e: Exception) {
-            console.warn(e.message)
-            setServiceWorkerState(ServiceWorkerState.Failed(errorMessage = e.message))
-        }
-    }
-
-    suspend fun loadPushManagerState(pushManager: PushManager?) {
-        if (pushManager != null) {
-            pushManager.getSubscription().await().let {
-                setPushManagerState(
-                    if (it != null) {
-                        PushManagerState.Subscribed(pushManager = pushManager)
-                    } else {
-                        PushManagerState.NotSubscribed(pushManager = pushManager)
-                    }
-                )
-            }
-        } else {
-            setPushManagerState(PushManagerState.NotSupported)
-        }
-    }
-
-    useEffect(dependencies = listOf()) {
-        scope.launch {
-            loadServiceWorkerState()
-        }
-    }
-
-    useEffect(dependencies = listOf(serviceWorkerState)) {
-        scope.launch {
-            if (serviceWorkerState is ServiceWorkerState.Registered) {
-                loadPushManagerState(serviceWorkerState.swRegistration.pushManager)
-            }
-        }
-    }
-
-    fun subscribeUser(pushManager: PushManager) = scope.launch {
-        try {
-            // use your own VAPID public key
-            val publicKey = "BLceSSynHW5gDWDz-SK5mmQgUSAOzs_yXMPtDO0AmNsRjUllTZsdmDU4_gKvTr_q1hA8ZX19xLbGe28Bkyvwm3E"
-            pushManager.subscribe(
-                PushSubscriptionOptions(userVisibleOnly = true, applicationServerKey = publicKey)
-            ).await()
-
-            // send subscription to server
-
-            setPushManagerState(PushManagerState.Subscribed(pushManager))
-            console.log("User subscribed")
-        } catch (e: Exception) {
-            console.warn("Subscription denied - ${e.message}")
-        }
-    }
-
-    fun unsubscribeUser(pushManager: PushManager) {
-        scope.launch {
-            val subscription = pushManager.getSubscription().await()
-            if (subscription != null) {
-                try {
-                    subscription.unsubscribe().await()
-                    setPushManagerState(PushManagerState.NotSubscribed(pushManager))
-                    console.log("User unsubscribed")
-                } catch (e: Exception) {
-                    console.error("User unsubscription failed: ${e.message}")
-                }
-            }
-        }
-    }
+    val serviceWorkerState = useServiceWorker()
+    val (pushManagerState, subscribeUser, unsubscribeUser) = usePushManager(
+        serviceWorkerState = serviceWorkerState,
+        publicKey = "BLceSSynHW5gDWDz-SK5mmQgUSAOzs_yXMPtDO0AmNsRjUllTZsdmDU4_gKvTr_q1hA8ZX19xLbGe28Bkyvwm3E"
+    )
 
     when (serviceWorkerState) {
         is ServiceWorkerState.Registered -> {
@@ -96,7 +30,13 @@ val App = functionalComponent<RProps> {
                 is PushManagerState.NotSubscribed -> {
                     button {
                         attrs {
-                            onClickFunction = { subscribeUser(pushManagerState.pushManager) }
+                            onClickFunction = {
+                                scope.launch {
+                                    subscribeUser(pushManagerState) {
+                                        console.log("Sending subscription to server...")
+                                    }
+                                }
+                            }
                         }
                         +"Click here to subscribe to push notifications"
                     }
@@ -107,7 +47,11 @@ val App = functionalComponent<RProps> {
                     }
                     button {
                         attrs {
-                            onClickFunction = { unsubscribeUser(pushManagerState.pushManager) }
+                            onClickFunction = {
+                                scope.launch {
+                                    unsubscribeUser(pushManagerState)
+                                }
+                            }
                         }
                         +"Click here to unsubscribe"
                     }
@@ -115,11 +59,11 @@ val App = functionalComponent<RProps> {
                 PushManagerState.NotSupported -> h2 {
                     +"Push API is not supported on this browser"
                 }
-                PushManagerState.Loading -> loadingComponent()
+                PushManagerState.Loading, PushManagerState.NotLoaded -> loadingComponent()
             }
         }
         is ServiceWorkerState.Failed -> h1 {
-            +"Error in registering service worker: ${serviceWorkerState.errorMessage}"
+            +"Error in registering service worker: ${serviceWorkerState.exception.message}"
         }
         ServiceWorkerState.Loading -> loadingComponent()
     }

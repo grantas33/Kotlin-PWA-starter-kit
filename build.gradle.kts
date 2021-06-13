@@ -1,19 +1,9 @@
 plugins {
-    id("org.jetbrains.kotlin.js") version "1.5.10"
+    id("org.jetbrains.kotlin.js") version "1.5.10" apply false
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-kotlin {
-    js {
-        browser {}
-    }
-}
 
 subprojects {
     apply {
@@ -29,16 +19,16 @@ subprojects {
     dependencies {
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.0")
     }
+    afterEvaluate {
+        tasks.register<Copy>("copyDistributionToRoot") {
+            group = "build"
+            description = "Copies the distribution files to the root project distribution directory."
 
-    tasks.register<Copy>("copyDistributionToRoot") {
-        group = "build"
-        description = "Copies the distribution files to the root project distribution directory."
+            from("$buildDir/distributions")
+            into("${parent?.buildDir}/distributions")
+        }
 
-        from("$buildDir/distributions")
-        into("${parent?.buildDir}/distributions")
+        tasks["build"].finalizedBy("copyDistributionToRoot")
     }
-
-    tasks["build"].finalizedBy("copyDistributionToRoot")
 }
 
-tasks["browserDevelopmentRun"].dependsOn(":serviceWorker:copyDevelopmentWebpackToClient")
