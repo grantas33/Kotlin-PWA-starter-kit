@@ -13,7 +13,7 @@ import react.dom.*
 
 val scope = MainScope()
 
-val App = functionalComponent<RProps> {
+val App = fc<Props> {
 
     val serviceWorkerState = useServiceWorker()
     val (pushManagerState, subscribeUser, unsubscribeUser) = usePushManager(
@@ -69,4 +69,4 @@ val App = functionalComponent<RProps> {
     }
 }
 
-fun RBuilder.App(props: RProps,handler:RHandler<RProps>) = child(App,props,handler)
+fun RBuilder.App(props: Props,handler:RHandler<Props>) = child(App,props,handler)

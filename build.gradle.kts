@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.js") version "1.5.10" apply false
+    id("org.jetbrains.kotlin.js") version "1.6.10" apply false
 }
 
 group = "org.example"
@@ -17,7 +17,7 @@ subprojects {
     val implementation by configurations
 
     dependencies {
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.5.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.0")
     }
     afterEvaluate {
         tasks.register<Copy>("copyDistributionToRoot") {

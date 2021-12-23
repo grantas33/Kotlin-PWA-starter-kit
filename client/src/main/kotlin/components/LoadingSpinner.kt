@@ -6,9 +6,9 @@ package client.components
 import react.*
 
 @JsName("default")
-external val LoadingSpinner: RClass<LoadingSpinnerProps>
+external val LoadingSpinner: ComponentClass<LoadingSpinnerProps>
 
-external interface LoadingSpinnerProps : RProps {
+external interface LoadingSpinnerProps : Props {
     var type: String
     var color: String
     var height: Int
